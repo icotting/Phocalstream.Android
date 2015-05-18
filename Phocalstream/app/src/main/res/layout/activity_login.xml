@@ -1,0 +1,52 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent" android:gravity="center_horizontal"
+    android:orientation="vertical" tools:context=".LoginActivity"
+    android:background="@drawable/winter_park_1">
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:id="@+id/imageView"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:src="@drawable/winter_park_1"
+        android:scaleType="centerCrop"
+        android:layout_alignParentStart="true"
+        android:visibility="gone" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="SIGN IN TO UPLOAD PHOTOS"
+        android:id="@+id/login_title"
+        android:layout_above="@+id/login_button"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="16dip"
+        android:textSize="@dimen/abc_text_size_medium_material"
+        android:textColor="#ffffff" />
+
+    <com.facebook.login.widget.LoginButton
+        android:id="@+id/login_button"
+        android:layout_width="300dip"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right"
+        android:layout_marginBottom="16dip"
+        android:layout_above="@+id/camera_sites"
+        android:layout_centerHorizontal="true">
+
+    </com.facebook.login.widget.LoginButton>
+
+     <Button
+        android:layout_width="300dip"
+        android:layout_height="wrap_content"
+        android:text="Or, Browse Existing Camera Sites"
+        android:id="@+id/camera_sites"
+        android:layout_marginBottom="16dip"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:onClick="cameraSites" />
+
+</RelativeLayout>
+

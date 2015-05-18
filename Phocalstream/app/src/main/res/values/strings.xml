@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Phocalstream</string>
+    <string name="facebook_app_id">1450820545189132</string>
+    <string name="title_activity_camera_sites">Phocalstream Camera Sites</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+</resources>
