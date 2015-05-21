@@ -14,6 +14,8 @@ import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.facebook.FacebookSdk;
+import com.facebook.login.LoginManager;
 import com.plattebasintimelapse.phocalstream.R;
 import com.plattebasintimelapse.phocalstream.adapters.UserSitePagerAdapter;
 import com.plattebasintimelapse.phocalstream.services.CameraSiteAsync;
@@ -44,7 +46,7 @@ public class HomeActivity extends FragmentActivity {
         mViewPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
             @Override
             public void onPageSelected(int position) {
-                actionBar.setTitle(userSitePagerAdapter.getPageTitle(position));
+//                actionBar.setTitle(userSitePagerAdapter.getPageTitle(position));
             }
         });
 
@@ -67,6 +69,9 @@ public class HomeActivity extends FragmentActivity {
             case R.id.action_add_site:
                 handleNewSite();
                 return true;
+            case R.id.action_logout:
+                logout();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -84,5 +89,9 @@ public class HomeActivity extends FragmentActivity {
         Toast.makeText(HomeActivity.this, "Create new site", Toast.LENGTH_SHORT).show();
     }
 
+    private void logout() {
+        LoginManager.getInstance().logOut();
+        HomeActivity.this.finish();
+    }
 }
 

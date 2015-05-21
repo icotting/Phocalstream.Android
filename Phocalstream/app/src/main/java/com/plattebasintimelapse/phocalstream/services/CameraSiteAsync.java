@@ -7,6 +7,7 @@ import android.widget.ProgressBar;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.plattebasintimelapse.phocalstream.adapters.CameraSiteAdapter;
+import com.plattebasintimelapse.phocalstream.managers.RequestManager;
 import com.plattebasintimelapse.phocalstream.model.CameraSite;
 
 import java.util.ArrayList;
