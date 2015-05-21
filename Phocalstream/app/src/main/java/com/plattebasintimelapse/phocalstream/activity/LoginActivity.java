@@ -1,10 +1,9 @@
-package com.plattebasintimelapse.phocalstream;
+package com.plattebasintimelapse.phocalstream.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.view.View;
-import android.widget.Toast;
 
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
@@ -12,6 +11,7 @@ import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
+import com.plattebasintimelapse.phocalstream.R;
 
 
 /**
@@ -33,7 +33,8 @@ public class LoginActivity extends FragmentActivity {
         loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
-                // App code
+                Intent i = new Intent(LoginActivity.this, HomeActivity.class);
+                startActivity(i);
             }
 
             @Override
@@ -48,7 +49,7 @@ public class LoginActivity extends FragmentActivity {
         });
 
         // TESTING
-        Intent i = new Intent(LoginActivity.this, CameraSitesActivity.class);
+        Intent i = new Intent(LoginActivity.this, HomeActivity.class);
         startActivity(i);
     }
 

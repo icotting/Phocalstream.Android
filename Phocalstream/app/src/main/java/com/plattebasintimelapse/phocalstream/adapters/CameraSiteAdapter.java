@@ -1,6 +1,5 @@
-package com.plattebasintimelapse.phocalstream;
+package com.plattebasintimelapse.phocalstream.adapters;
 
-import android.media.Image;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.plattebasintimelapse.phocalstream.R;
 import com.plattebasintimelapse.phocalstream.model.CameraSite;
 import com.plattebasintimelapse.phocalstream.services.FetchImageAsync;
 
@@ -15,8 +15,6 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 
 /**
  * Created by ZachChristensen on 5/15/15.
