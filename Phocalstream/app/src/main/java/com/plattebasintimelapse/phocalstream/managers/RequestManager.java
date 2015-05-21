@@ -1,4 +1,4 @@
-package com.plattebasintimelapse.phocalstream.services;
+package com.plattebasintimelapse.phocalstream.managers;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -17,7 +17,7 @@ public class RequestManager {
 
     public RequestManager() { }
 
-    protected static String[] Get_Connection(String urlString) {
+    public static String[] Get_Connection(String urlString) {
         HttpURLConnection urlConnection = null;
         try {
             URL url = new URL(urlString);

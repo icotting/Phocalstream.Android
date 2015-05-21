@@ -4,6 +4,8 @@ import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.widget.ImageView;
 
+import com.plattebasintimelapse.phocalstream.managers.RequestManager;
+
 /**
  * Created by ZachChristensen on 5/18/15.
  */
