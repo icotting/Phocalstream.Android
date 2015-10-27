@@ -50,7 +50,7 @@ public class HomeActivity extends FragmentActivity {
             }
         });
 
-        UserSiteAsync userSiteAsync = new UserSiteAsync(progressBar, userSitePagerAdapter);
+        UserSiteAsync userSiteAsync = new UserSiteAsync(this, progressBar, userSitePagerAdapter);
         userSiteAsync.execute();
     }
 
@@ -82,7 +82,7 @@ public class HomeActivity extends FragmentActivity {
     }
 
     private void handleUploadNewImage() {
-        Toast.makeText(HomeActivity.this, "Upload new image for " + userSitePagerAdapter.getSites().get(mViewPager.getCurrentItem()).getDetails().getSiteName(), Toast.LENGTH_SHORT).show();
+        Toast.makeText(HomeActivity.this, "Upload new image for " + userSitePagerAdapter.getSites().get(mViewPager.getCurrentItem()).getName(), Toast.LENGTH_SHORT).show();
     }
 
     private void handleNewSite() {

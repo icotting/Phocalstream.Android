@@ -51,7 +51,7 @@ public class CameraSitesActivity extends Activity {
         mAdapter = new CameraSiteAdapter(new ArrayList<CameraSite>());
         mRecyclerView.setAdapter(mAdapter);
 
-        CameraSiteAsync cameraSiteAsync = new CameraSiteAsync(progressBar, mAdapter);
+        CameraSiteAsync cameraSiteAsync = new CameraSiteAsync(this, progressBar, mAdapter);
         cameraSiteAsync.execute();
     }
 

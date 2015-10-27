@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -71,7 +72,7 @@ public class UserSiteFragment extends Fragment {
 
             this.dateFormat = DateFormat.getDateInstance();
             this.simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-
+            Log.d("Site", getArguments().getString(ARG_SITE));
         }
     }
 
@@ -81,21 +82,21 @@ public class UserSiteFragment extends Fragment {
 
         ImageView background = (ImageView) view.findViewById(R.id.user_site_image);
         FetchImageAsync fetchImageAsync = new FetchImageAsync(background);
-        fetchImageAsync.execute(userSite.getDetails().getCoverPhotoID());
+        fetchImageAsync.execute((int) userSite.getCoverPhotoID());
 
         siteTitle = (TextView) view.findViewById(R.id.site_name);
         siteDescription = (TextView) view.findViewById(R.id.site_description);
 
-        siteTitle.setText(userSite.getDetails().getSiteName());
+        siteTitle.setText(userSite.getName());
         try {
             siteDescription.setText(String.format("%,d photos: %s to %s",
-                            userSite.getDetails().getPhotoCount(),
-                            dateFormat.format(simpleDateFormat.parse(userSite.getDetails().getFirst().split("T")[0])),
-                            dateFormat.format(simpleDateFormat.parse(userSite.getDetails().getLast().split("T")[0]))
+                            userSite.getPhotoCount(),
+                            dateFormat.format(simpleDateFormat.parse(userSite.getFrom().split("T")[0])),
+                            dateFormat.format(simpleDateFormat.parse(userSite.getTo().split("T")[0]))
                     )
             );
         } catch (ParseException e) {
-            siteDescription.setText(String.format("%,d photos", userSite.getDetails().getPhotoCount()));
+            siteDescription.setText(String.format("%,d photos", userSite.getPhotoCount()));
         }
 
         return view;

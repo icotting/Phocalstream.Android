@@ -5,34 +5,62 @@ package com.plattebasintimelapse.phocalstream.model;
  */
 public class UserSite {
 
-    Details Details;
-    double Latitude;
-    double Longitude;
+    long CollectionID;
+    String Name;
+    int PhotoCount;
+    String From;
+    String To;
+    long CoverPhotoID;
+
 
     public UserSite() {
     }
 
-    public Details getDetails() {
-        return Details;
+    public long getCollectionID() {
+        return CollectionID;
     }
 
-    public void setDetails(Details details) {
-        this.Details = details;
+    public void setCollectionID(long collectionID) {
+        CollectionID = collectionID;
     }
 
-    public double getLatitude() {
-        return Latitude;
+    public String getName() {
+        return Name;
     }
 
-    public void setLatitude(double latitude) {
-        Latitude = latitude;
+    public void setName(String name) {
+        Name = name;
     }
 
-    public double getLongitude() {
-        return Longitude;
+    public int getPhotoCount() {
+        return PhotoCount;
     }
 
-    public void setLongitude(double longitude) {
-        Longitude = longitude;
+    public void setPhotoCount(int photoCount) {
+        PhotoCount = photoCount;
+    }
+
+    public String getFrom() {
+        return From;
+    }
+
+    public void setFrom(String from) {
+        From = from;
+    }
+
+    public String getTo() {
+        return To;
+    }
+
+    public void setTo(String to) {
+        To = to;
+    }
+
+    public long getCoverPhotoID() {
+        return CoverPhotoID;
+    }
+
+    public void setCoverPhotoID(long coverPhotoID) {
+        CoverPhotoID = coverPhotoID;
     }
 }

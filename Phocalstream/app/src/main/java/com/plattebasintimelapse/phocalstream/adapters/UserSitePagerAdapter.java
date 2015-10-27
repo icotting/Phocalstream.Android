@@ -37,7 +37,7 @@ public class UserSitePagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public CharSequence getPageTitle(int position) {
-        return sites.get(position).getDetails().getSiteName();
+        return sites.get(position).getName();
     }
 
     public ArrayList<UserSite> getSites() {

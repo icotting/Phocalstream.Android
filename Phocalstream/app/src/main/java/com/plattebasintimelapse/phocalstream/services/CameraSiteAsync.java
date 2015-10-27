@@ -1,5 +1,7 @@
 package com.plattebasintimelapse.phocalstream.services;
 
+import android.app.DownloadManager;
+import android.content.Context;
 import android.os.AsyncTask;
 import android.view.View;
 import android.widget.ProgressBar;
@@ -17,10 +19,12 @@ import java.util.ArrayList;
  */
 public class CameraSiteAsync extends AsyncTask<Void, Integer, ArrayList<CameraSite>> {
 
+    private Context context;
     private ProgressBar progressBar;
     private CameraSiteAdapter adapter;
 
-    public CameraSiteAsync(ProgressBar progressBar, CameraSiteAdapter adapter) {
+    public CameraSiteAsync(Context context, ProgressBar progressBar, CameraSiteAdapter adapter) {
+        this.context = context;
         this.progressBar = progressBar;
         this.adapter = adapter;
     }
@@ -35,7 +39,8 @@ public class CameraSiteAsync extends AsyncTask<Void, Integer, ArrayList<CameraSi
         String url = "http://images.plattebasintimelapse.com/api/sitecollection/list";
         ArrayList<CameraSite> sites;
 
-        String[] result = RequestManager.Get_Connection(url);
+        RequestManager requestManager = new RequestManager(this.context);
+        String[] result = requestManager.Get_Connection(url);
 
         if(result[0].equals("200")) {
             Gson gson = new Gson();

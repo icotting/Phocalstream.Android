@@ -1,8 +1,13 @@
 package com.plattebasintimelapse.phocalstream.managers;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.text.TextUtils;
 import android.util.Log;
+
+import org.apache.http.protocol.HttpContext;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
@@ -10,23 +15,79 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.CookieStore;
+import java.net.HttpCookie;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by ZachChristensen on 5/15/15.
  */
 public class RequestManager {
 
-    public RequestManager() { }
+    private Context context;
+    private SharedPreferences settings;
+    private static java.net.CookieManager msCookieManager;
+    private static String COOKIES_HEADER = "Set-Cookie";
+    private static String COOKIE_STORE_KEY = "Cookie-Store-Key";
 
-    public static String[] Get_Connection(String urlString) {
+    public RequestManager(Context context) {
+        this.context = context;
+        settings = this.context.getSharedPreferences("Phocalstream", 0);
+        msCookieManager = new java.net.CookieManager();
+    }
+
+    public String[] Login(String urlString) {
         HttpURLConnection urlConnection = null;
         try {
             URL url = new URL(urlString);
 
             urlConnection = (HttpURLConnection) url.openConnection();
+            urlConnection.setRequestMethod("GET");
+            urlConnection.setRequestProperty("Accept", "application/json");
+
+            BufferedReader reader;
+            if (urlConnection.getResponseCode() == 200) {
+                reader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+            } else {
+                reader = new BufferedReader(new InputStreamReader(urlConnection.getErrorStream()));
+            }
+
+            // get the cookie and save it
+            Map<String, List<String>> headerFields = urlConnection.getHeaderFields();
+            List<String> cookiesHeader = headerFields.get(COOKIES_HEADER);
+            if (cookiesHeader != null) {
+                for (String cookie : cookiesHeader) {
+                    msCookieManager.getCookieStore().add(null, HttpCookie.parse(cookie).get(0));
+                }
+            }
+            saveCookies(TextUtils.join(";", msCookieManager.getCookieStore().getCookies()));
+
+            return new String[]{String.valueOf(urlConnection.getResponseCode()), readStream(reader)};
+        } catch (IOException ex) {
+            return new String[]{"-1", "Error."};
+        } finally {
+            if (urlConnection != null) {
+                urlConnection.disconnect();
+            }
+        }
+    }
+
+    public String[] Get_Connection(String urlString) {
+        HttpURLConnection urlConnection = null;
+        try {
+            URL url = new URL(urlString);
+
+            urlConnection = (HttpURLConnection) url.openConnection();
+            urlConnection.setRequestMethod("GET");
+            urlConnection.setRequestProperty("Accept", "application/json");
+
+            if (hasCookie()) {
+                urlConnection.setRequestProperty("Cookie", getCookies());
+            }
 
             BufferedReader reader;
             if (urlConnection.getResponseCode() == 200) {
@@ -77,7 +138,7 @@ public class RequestManager {
         return null;
     }
 
-    public static String[] uploadImage(String url_string, String filePath, String token){
+    public String[] uploadImage(String url_string, String filePath, String token){
 
         HttpURLConnection conn = null;
         String lineEnd = "\r\n";
@@ -148,4 +209,18 @@ public class RequestManager {
             return new String[] {"-1", "Error"};
         }
     }
+
+    private Boolean hasCookie() {
+        String cookie = settings.getString(this.COOKIE_STORE_KEY, "");
+        return !cookie.isEmpty();
+    }
+
+    private String getCookies() {
+        return settings.getString(this.COOKIE_STORE_KEY, "");
+    }
+
+    private void saveCookies(String cookies) {
+        settings.edit().putString(this.COOKIE_STORE_KEY, cookies).commit();
+    }
+
 }
