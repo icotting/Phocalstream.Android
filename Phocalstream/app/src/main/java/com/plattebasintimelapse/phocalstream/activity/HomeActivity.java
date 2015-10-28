@@ -2,6 +2,7 @@ package com.plattebasintimelapse.phocalstream.activity;
 
 import android.app.ActionBar;
 import android.app.Activity;
+import android.content.Intent;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
@@ -28,7 +29,6 @@ public class HomeActivity extends FragmentActivity {
     ViewPager mViewPager;
 
     private ProgressBar progressBar;
-    private Button upload;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,7 +36,6 @@ public class HomeActivity extends FragmentActivity {
 
         final ActionBar actionBar = getActionBar();
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
-        upload = (Button) findViewById(R.id.uploadButton);
 
         // ViewPager and its adapters use support library
         // fragments, so use getSupportFragmentManager.
@@ -57,7 +56,7 @@ public class HomeActivity extends FragmentActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_home, menu);
-        return true;
+        return super.onCreateOptionsMenu(menu);
     }
 
     @Override
@@ -86,7 +85,7 @@ public class HomeActivity extends FragmentActivity {
     }
 
     private void handleNewSite() {
-        Toast.makeText(HomeActivity.this, "Create new site", Toast.LENGTH_SHORT).show();
+        startActivity(new Intent(this, CreateCameraSiteActivity.class));
     }
 
     private void logout() {
