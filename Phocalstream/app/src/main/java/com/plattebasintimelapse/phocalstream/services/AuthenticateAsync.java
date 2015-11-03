@@ -66,7 +66,6 @@ public class AuthenticateAsync extends AsyncTask<String, Void, String[]> {
     @Override
     protected String[] doInBackground(String... params) {
         String url = String.format("http://images.plattebasintimelapse.org/api/mobileclient/authenticate?fbToken=%s", params[0]);
-//        String url = String.format("http://10.211.55.5:1174/api/mobileclient/authenticate?fbToken=%s", params[0]);
         RequestManager requestManager = new RequestManager(this.context);
         return requestManager.Login(url);
     }

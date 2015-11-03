@@ -101,4 +101,8 @@ public class UserSiteFragment extends Fragment {
 
         return view;
     }
+
+    public UserSite getUserSite() {
+        return userSite;
+    }
 }
