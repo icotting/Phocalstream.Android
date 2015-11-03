@@ -1,11 +1,18 @@
 package com.plattebasintimelapse.phocalstream.activity;
 
+import android.app.ProgressDialog;
+import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
+import android.net.Uri;
 import android.os.Bundle;
 import android.app.Activity;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -13,6 +20,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -21,8 +30,12 @@ import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.plattebasintimelapse.phocalstream.R;
+import com.plattebasintimelapse.phocalstream.services.CreateCameraSiteAsync;
 
+import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,21 +52,25 @@ public class CreateCameraSiteActivity extends Activity implements
     private Geocoder mGeocoder;
     private Map<String, String> stateAbbreviations;
 
+    private static final int REQUEST_IMAGE_CAPTURE = 1;
+    private String photoPath;
+
     private EditText siteNameField, siteLocationField;
     private MenuItem create;
 
-    private String siteName;
+    private String siteName = "";
     private double siteLat = -1, siteLong = -1;
-    private String siteCounty, siteState;
+    private String siteCounty = "", siteState = "";
     private Bitmap siteImage;
+    private ImageView siteImagePreview;
+
+    private ProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_camera_site);
         getActionBar().setDisplayHomeAsUpEnabled(true);
-
-        Log.d("Google Services", "getting ready to create client...");
 
         buildGoogleApiClient();
         this.mGeocoder = new Geocoder(this);
@@ -80,6 +97,9 @@ public class CreateCameraSiteActivity extends Activity implements
             }
         });
 
+        this.siteImagePreview = (ImageView) findViewById(R.id.siteImagePreview);
+
+        this.progressBar = (ProgressBar) findViewById(R.id.siteProgressBar);
     }
 
     @Override
@@ -131,13 +151,29 @@ public class CreateCameraSiteActivity extends Activity implements
         }
     }
 
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+            loadImagePreview(this.photoPath);
+        }
+    }
+
+
     public void addFirstPhoto(View view) {
-        Toast.makeText(CreateCameraSiteActivity.this, "AddFirstPhoto", Toast.LENGTH_SHORT).show();
+        dispatchTakePictureIntent();
     }
 
     public void createCameraSite() {
-        Toast.makeText(CreateCameraSiteActivity.this, "Create Camera Site", Toast.LENGTH_SHORT).show();
+        CreateCameraSiteAsync createCameraSiteAsync = new CreateCameraSiteAsync(this, this.progressBar, this.photoPath);
 
+        HashMap<String, String> values = new HashMap<String, String>();
+
+        values.put("SiteName", this.siteName);
+        values.put("Latitude", String.valueOf(this.siteLat));
+        values.put("Longitude", String.valueOf(this.siteLong));
+        values.put("County", this.siteCounty);
+        values.put("State", this.siteState);
+
+        createCameraSiteAsync.execute(values);
     }
 
     // MARK: Functions
@@ -152,10 +188,17 @@ public class CreateCameraSiteActivity extends Activity implements
         this.siteLocationField.setText(String.format("( %f, %f )", this.siteLat, this.siteLong));
 
         try {
-            List<Address> addressList = mGeocoder.getFromLocation(this.mLastLocation.getLatitude(), this.mLastLocation.getLongitude(), 1);
+            List<Address> addressList = mGeocoder.getFromLocation(this.mLastLocation.getLatitude(), this.mLastLocation.getLongitude(), 5);
 
-            this.siteCounty = addressList.get(0).getLocality();
-            this.siteState = this.stateAbbreviations.containsKey(addressList.get(0).getAdminArea()) ? this.stateAbbreviations.get(addressList.get(0).getAdminArea()) : "";
+            for (Address address : addressList) {
+                if (address.getSubAdminArea() != null) {
+                    this.siteCounty = address.getSubAdminArea();
+                    this.siteState = this.stateAbbreviations.containsKey(address.getAdminArea()) ? this.stateAbbreviations.get(address.getAdminArea()) : "";
+                    break;
+                }
+            }
+
+            this.create.setEnabled(this.isSiteValid());
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -265,8 +308,6 @@ public class CreateCameraSiteActivity extends Activity implements
 
     @Override
     public void onConnected(Bundle bundle) {
-        Log.d("Google Services", "Connected...");
-
         mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
         if (mLastLocation != null) {
             handleLocationUpdate();
@@ -284,7 +325,9 @@ public class CreateCameraSiteActivity extends Activity implements
 
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
-        Log.d("Google Services", connectionResult.toString());
+        Toast.makeText(CreateCameraSiteActivity.this,
+                "Unable to connect to Google Services: " + connectionResult.getErrorMessage(),
+                Toast.LENGTH_SHORT).show();
     }
 
     // MARK: LocationListener
@@ -293,6 +336,99 @@ public class CreateCameraSiteActivity extends Activity implements
     public void onLocationChanged(Location location) {
         this.mLastLocation = location;
         handleLocationUpdate();
+    }
+
+
+    // MARK: Camera Functionality
+    private void dispatchTakePictureIntent() {
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+
+        // Ensure that there's a camera activity to handle the intent
+        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+
+            // Create the File where the photo should go
+            File photoFile = null;
+
+            try {
+                photoFile = this.createImageFile();
+
+                // Continue only if the File was successfully created
+                if (photoFile != null) {
+                    takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(photoFile));
+                    startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+                }
+            }
+            catch (IOException ex) {
+                Log.d("Photo bug: ", ex.toString());
+                Toast.makeText(this, "Error accessing camera.", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    public File createImageFile() throws IOException {
+        // Create an image file name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        File storageDir = Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(
+                imageFileName,  /* prefix */
+                ".jpg",         /* suffix */
+                storageDir      /* directory */
+        );
+
+        this.photoPath = image.getAbsolutePath();
+        return image;
+    }
+
+    private static int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
+        // Raw height and width of image
+        final int height = options.outHeight;
+        final int width = options.outWidth;
+        int inSampleSize = 1;
+
+        if (height > reqHeight || width > reqWidth) {
+
+            final int halfHeight = height / 2;
+            final int halfWidth = width / 2;
+
+            // Calculate the largest inSampleSize value that is a power of 2 and keeps both
+            // height and width larger than the requested height and width.
+            while ((halfHeight / inSampleSize) > reqHeight
+                    && (halfWidth / inSampleSize) > reqWidth) {
+                inSampleSize *= 2;
+            }
+        }
+
+        return inSampleSize;
+    }
+
+    private void loadImagePreview(String photoPath) {
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+        options.inJustDecodeBounds = true;
+        this.siteImage = BitmapFactory.decodeFile(photoPath, options);
+
+        int width = 500;
+        int height = 500;
+        int sampleSize = calculateInSampleSize(options, width, height);
+
+        options.inSampleSize = sampleSize;
+        options.inJustDecodeBounds = false;
+        this.siteImage  = BitmapFactory.decodeFile(photoPath, options);
+
+        if (this.siteImage  != null) {
+            if (this.siteImage .getWidth() > this.siteImage .getHeight())
+            {
+                Matrix matrix = new Matrix();
+                matrix.postRotate(90);
+                this.siteImage  = Bitmap.createBitmap(this.siteImage , 0, 0, this.siteImage .getWidth(), this.siteImage .getHeight(), matrix, true);
+            }
+            this.siteImagePreview.setImageBitmap(this.siteImage);
+            this.create.setEnabled(this.isSiteValid());
+        } else {
+            Toast.makeText(CreateCameraSiteActivity.this, "Image not found. Whoops!", Toast.LENGTH_SHORT).show();
+        }
     }
 
 

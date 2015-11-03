@@ -7,19 +7,29 @@ import android.graphics.BitmapFactory;
 import android.text.TextUtils;
 import android.util.Log;
 
+import org.apache.http.NameValuePair;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.protocol.HttpContext;
+import org.json.JSONObject;
 
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
 import java.net.CookieStore;
 import java.net.HttpCookie;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLEncoder;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -106,6 +116,48 @@ public class RequestManager {
         }
     }
 
+    public String[] Post_Connection(String urlString, HashMap<String, String> values) {
+        HttpURLConnection urlConnection = null;
+        try {
+            URL url = new URL(urlString);
+
+            urlConnection = (HttpURLConnection) url.openConnection();
+            urlConnection.setRequestMethod("POST");
+            urlConnection.setRequestProperty("Content-Type", "application/json");
+            urlConnection.setDoOutput(true);
+
+            if (hasCookie()) {
+                urlConnection.setRequestProperty("Cookie", getCookies());
+            }
+
+            String jsonString = new JSONObject(values).toString();
+            byte[] outputInBytes = jsonString.getBytes("UTF-8");
+
+            OutputStream out = urlConnection.getOutputStream();
+            out.write( outputInBytes );
+            out.close();
+
+//            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(out, "UTF-8"));
+  //          writer.write(jsonString);
+
+
+            BufferedReader reader;
+            if (urlConnection.getResponseCode() == 200) {
+                reader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+            } else {
+                reader = new BufferedReader(new InputStreamReader(urlConnection.getErrorStream()));
+            }
+
+            return new String[] {String.valueOf(urlConnection.getResponseCode()), readStream(reader)};
+        } catch (IOException ex) {
+            return new String[] {"-1", "Error."};
+        } finally {
+            if (urlConnection != null) {
+                urlConnection.disconnect();
+            }
+        }
+    }
+
     private static String readStream(BufferedReader reader) throws IOException{
         StringBuilder sb = new StringBuilder();
 
@@ -138,7 +190,7 @@ public class RequestManager {
         return null;
     }
 
-    public String[] uploadImage(String url_string, String filePath, String token){
+    public String[] uploadImage(String url_string, String filePath){
 
         HttpURLConnection conn = null;
         String lineEnd = "\r\n";
@@ -147,7 +199,7 @@ public class RequestManager {
 
         try {
             // open a URL connection to the Servlet
-            FileInputStream fileInputStream = new FileInputStream(new File(filePath.split(":")[1]) );
+            FileInputStream fileInputStream = new FileInputStream(new File(filePath) );
             URL url = new URL(url_string);
 
             // Open a HTTP connection to the URL
@@ -160,7 +212,11 @@ public class RequestManager {
             conn.setRequestMethod("POST");
             conn.setRequestProperty("Connection", "Keep-Alive");
             conn.setRequestProperty("Content-Type", "multipart/form-data;boundary="+boundary);
-//            conn.setRequestProperty("Authorization", "Bearer " + token);
+
+            if (hasCookie()) {
+                conn.setRequestProperty("Cookie", getCookies());
+            }
+
 
             // Image
             DataOutputStream dos = new DataOutputStream( conn.getOutputStream() );
@@ -202,13 +258,24 @@ public class RequestManager {
         }
 
         try {
-            return new String[] {String.valueOf( conn.getResponseCode()), "Upload Successful."};
+
+            BufferedReader reader;
+            if (conn.getResponseCode() == 200) {
+                reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+            } else {
+                reader = new BufferedReader(new InputStreamReader(conn.getErrorStream()));
+            }
+
+            return new String[] {String.valueOf(conn.getResponseCode()), readStream(reader)};
         }
         catch (Exception e) {
             Log.e("Phocalstream", "Exception : " + e.getMessage(), e);
             return new String[] {"-1", "Error"};
         }
     }
+
+
+    // COOKIE MANAGEMENT
 
     private Boolean hasCookie() {
         String cookie = settings.getString(this.COOKIE_STORE_KEY, "");
