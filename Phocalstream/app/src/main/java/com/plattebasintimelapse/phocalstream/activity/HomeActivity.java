@@ -28,6 +28,7 @@ import java.util.Locale;
 
 public class HomeActivity extends FragmentActivity {
 
+    private UserSiteAsync userSiteAsync;
     private UserSitePagerAdapter userSitePagerAdapter;
     private ViewPager mViewPager;
 
@@ -46,7 +47,12 @@ public class HomeActivity extends FragmentActivity {
         mViewPager = (ViewPager) findViewById(R.id.pager);
         mViewPager.setAdapter(userSitePagerAdapter);
 
-        UserSiteAsync userSiteAsync = new UserSiteAsync(this, progressBar, userSitePagerAdapter);
+        this.userSiteAsync = new UserSiteAsync(this, progressBar, userSitePagerAdapter);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
         userSiteAsync.execute();
     }
 
