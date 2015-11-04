@@ -41,21 +41,15 @@ public class UploadImageAsync extends AsyncTask<Long, Integer, String[]> {
         super.onPostExecute(result);
         progressBar.setVisibility(View.INVISIBLE);
 
-        String message;
+        String message = result[1];
         if (result[0].equals("200")) {
             message = "Image uploaded successfully.";
-        }
-        else {
-            message = result[1];
         }
         Toast.makeText(this.activity, message, Toast.LENGTH_SHORT).show();
     }
 
     @Override
     protected String[] doInBackground(Long... params) {
-        String uploadUrl = String.format("http://images.plattebasintimelapse.org/api/upload/upload?selectedCollectionID=%d", params[0]);
-        Log.d("Photo Upload", uploadUrl);
-        String[] result = this.requestManager.uploadImage(uploadUrl, this.filePath);
-        return result;
+        return this.requestManager.uploadImage(String.format("http://images.plattebasintimelapse.org/api/upload/upload?selectedCollectionID=%d", params[0]), this.filePath);
     }
 }

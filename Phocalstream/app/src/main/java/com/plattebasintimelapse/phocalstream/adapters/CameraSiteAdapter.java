@@ -51,14 +51,9 @@ public class CameraSiteAdapter extends RecyclerView.Adapter<CameraSiteAdapter.Vi
 
     // Create new views (invoked by the layout manager)
     @Override
-    public CameraSiteAdapter.ViewHolder onCreateViewHolder(ViewGroup parent,
-                                                   int viewType) {
-        // create a new view
+    public CameraSiteAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.camera_site_card, parent, false);
-        // set the view's size, margins, paddings and layout parameters
-
-        ViewHolder vh = new ViewHolder(v);
-        return vh;
+        return new ViewHolder(v);
     }
 
     // Replace the contents of a view (invoked by the layout manager)

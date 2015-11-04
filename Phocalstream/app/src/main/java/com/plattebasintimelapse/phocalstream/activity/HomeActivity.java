@@ -1,31 +1,23 @@
 package com.plattebasintimelapse.phocalstream.activity;
 
 import android.app.ActionBar;
-import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import com.facebook.FacebookSdk;
 import com.facebook.login.LoginManager;
 import com.plattebasintimelapse.phocalstream.R;
 import com.plattebasintimelapse.phocalstream.adapters.UserSitePagerAdapter;
-import com.plattebasintimelapse.phocalstream.fragments.UserSiteFragment;
 import com.plattebasintimelapse.phocalstream.model.UserSite;
-import com.plattebasintimelapse.phocalstream.services.CameraSiteAsync;
 import com.plattebasintimelapse.phocalstream.services.UploadImageAsync;
 import com.plattebasintimelapse.phocalstream.services.UserSiteAsync;
 
@@ -35,8 +27,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class HomeActivity extends FragmentActivity {
-    // When requested, this adapter returns a DemoObjectFragment,
-    // representing an object in the collection.
+
     UserSitePagerAdapter userSitePagerAdapter;
     ViewPager mViewPager;
 
@@ -52,16 +43,9 @@ public class HomeActivity extends FragmentActivity {
         final ActionBar actionBar = getActionBar();
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
 
-        // ViewPager and its adapters use support library
-        // fragments, so use getSupportFragmentManager.
         userSitePagerAdapter = new UserSitePagerAdapter(getSupportFragmentManager());
         mViewPager = (ViewPager) findViewById(R.id.pager);
         mViewPager.setAdapter(userSitePagerAdapter);
-        mViewPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
-            @Override
-            public void onPageSelected(int position) {
-            }
-        });
 
         UserSiteAsync userSiteAsync = new UserSiteAsync(this, progressBar, userSitePagerAdapter);
         userSiteAsync.execute();
@@ -92,11 +76,8 @@ public class HomeActivity extends FragmentActivity {
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-            UploadImageAsync uploadImageAsync = new UploadImageAsync(this, this.progressBar, this.photoPath);
-
             UserSite site = HomeActivity.this.userSitePagerAdapter.getSites().get(this.mViewPager.getCurrentItem());
-            Log.d("SiteID", String.valueOf(site.getCollectionID()));
-
+            UploadImageAsync uploadImageAsync = new UploadImageAsync(this, this.progressBar, this.photoPath);
             uploadImageAsync.execute(site.getCollectionID());
         }
     }

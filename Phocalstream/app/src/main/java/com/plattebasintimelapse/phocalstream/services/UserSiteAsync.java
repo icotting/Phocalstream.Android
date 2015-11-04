@@ -36,19 +36,12 @@ public class UserSiteAsync extends AsyncTask<Void, Integer, ArrayList<UserSite>>
 
     @Override
     protected ArrayList<UserSite> doInBackground(Void... voids) {
-        String url = "http://images.plattebasintimelapse.org/api/usercollection/usersites";
-        ArrayList<UserSite> sites;
+        ArrayList<UserSite> sites = new ArrayList<>();
 
-        String[] result = new RequestManager(this.context).Get_Connection(url);
+        String[] result = new RequestManager(this.context).Get_Connection("http://images.plattebasintimelapse.org/api/usercollection/usersites");
 
         if(result[0].equals("200")) {
-            Gson gson = new Gson();
-            Log.d("Sites", result[1]);
-            sites = gson.fromJson(result[1], new TypeToken<ArrayList<UserSite>>(){}.getType());
-        }
-        else {
-            sites = new ArrayList<UserSite>();
-            Log.d("Load sites", result[1]);
+            sites = new Gson().fromJson(result[1], new TypeToken<ArrayList<UserSite>>() {}.getType());
         }
 
         return sites;

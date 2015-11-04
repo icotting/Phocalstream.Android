@@ -1,6 +1,5 @@
 package com.plattebasintimelapse.phocalstream.services;
 
-import android.app.DownloadManager;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.view.View;
@@ -36,18 +35,12 @@ public class CameraSiteAsync extends AsyncTask<Void, Integer, ArrayList<CameraSi
 
     @Override
     protected ArrayList<CameraSite> doInBackground(Void... voids) {
-        String url = "http://images.plattebasintimelapse.com/api/sitecollection/list";
-        ArrayList<CameraSite> sites;
+        ArrayList<CameraSite> sites = new ArrayList<>();
 
-        RequestManager requestManager = new RequestManager(this.context);
-        String[] result = requestManager.Get_Connection(url);
+        String[] result = new RequestManager(this.context).Get_Connection("http://images.plattebasintimelapse.com/api/sitecollection/list");
 
         if(result[0].equals("200")) {
-            Gson gson = new Gson();
-            sites = gson.fromJson(result[1], new TypeToken<ArrayList<CameraSite>>(){}.getType());
-        }
-        else {
-            sites = new ArrayList<CameraSite>();
+            sites = new Gson().fromJson(result[1], new TypeToken<ArrayList<CameraSite>>() {}.getType());
         }
 
         return sites;

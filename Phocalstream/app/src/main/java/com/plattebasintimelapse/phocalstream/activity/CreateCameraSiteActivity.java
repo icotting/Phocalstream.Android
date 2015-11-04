@@ -1,6 +1,5 @@
 package com.plattebasintimelapse.phocalstream.activity;
 
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -165,8 +164,7 @@ public class CreateCameraSiteActivity extends Activity implements
     public void createCameraSite() {
         CreateCameraSiteAsync createCameraSiteAsync = new CreateCameraSiteAsync(this, this.progressBar, this.photoPath);
 
-        HashMap<String, String> values = new HashMap<String, String>();
-
+        HashMap<String, String> values = new HashMap<>();
         values.put("SiteName", this.siteName);
         values.put("Latitude", String.valueOf(this.siteLat));
         values.put("Longitude", String.valueOf(this.siteLong));

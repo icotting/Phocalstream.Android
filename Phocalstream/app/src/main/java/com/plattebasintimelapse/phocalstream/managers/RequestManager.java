@@ -7,46 +7,30 @@ import android.graphics.BitmapFactory;
 import android.text.TextUtils;
 import android.util.Log;
 
-import org.apache.http.NameValuePair;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.protocol.HttpContext;
 import org.json.JSONObject;
 
-import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
-import java.net.CookieStore;
 import java.net.HttpCookie;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Created by ZachChristensen on 5/15/15.
- */
 public class RequestManager {
 
-    private Context context;
     private SharedPreferences settings;
-    private static java.net.CookieManager msCookieManager;
-    private static String COOKIES_HEADER = "Set-Cookie";
-    private static String COOKIE_STORE_KEY = "Cookie-Store-Key";
+    private final java.net.CookieManager msCookieManager;
+    private final String COOKIE_STORE_KEY = "Cookie-Store-Key";
 
     public RequestManager(Context context) {
-        this.context = context;
-        settings = this.context.getSharedPreferences("Phocalstream", 0);
+        settings = context.getSharedPreferences("Phocalstream", 0);
         msCookieManager = new java.net.CookieManager();
     }
 
@@ -68,7 +52,7 @@ public class RequestManager {
 
             // get the cookie and save it
             Map<String, List<String>> headerFields = urlConnection.getHeaderFields();
-            List<String> cookiesHeader = headerFields.get(COOKIES_HEADER);
+            List<String> cookiesHeader = headerFields.get("Set-Cookie");
             if (cookiesHeader != null) {
                 for (String cookie : cookiesHeader) {
                     msCookieManager.getCookieStore().add(null, HttpCookie.parse(cookie).get(0));
@@ -161,7 +145,7 @@ public class RequestManager {
     private static String readStream(BufferedReader reader) throws IOException{
         StringBuilder sb = new StringBuilder();
 
-        String line = "";
+        String line;
         while ((line = reader.readLine()) != null) {
             sb.append(line);
         }
@@ -171,12 +155,12 @@ public class RequestManager {
     }
 
     public static Bitmap downloadBitmap(String urlString) {
-        HttpURLConnection urlConnection = null;
+        HttpURLConnection urlConnection;
         try {
             URL url = new URL(urlString);
             urlConnection = (HttpURLConnection) url.openConnection();
 
-            Bitmap bitmap = null;
+            Bitmap bitmap;
             if (urlConnection.getResponseCode() == 200) {
                 bitmap = BitmapFactory.decodeStream(urlConnection.getInputStream());
                 return bitmap;
@@ -231,7 +215,7 @@ public class RequestManager {
 
             // create a buffer of maximum size
             int bytesAvailable = fileInputStream.available();
-            int maxBufferSize = 1*1024*1024;
+            int maxBufferSize = 1024*1024;
             int bufferSize = Math.min(bytesAvailable, maxBufferSize);
             byte[] buffer = new byte[bufferSize];
 
@@ -260,13 +244,15 @@ public class RequestManager {
         try {
 
             BufferedReader reader;
-            if (conn.getResponseCode() == 200) {
-                reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-            } else {
-                reader = new BufferedReader(new InputStreamReader(conn.getErrorStream()));
+            if (conn != null) {
+                if (conn.getResponseCode() == 200) {
+                    reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                } else {
+                    reader = new BufferedReader(new InputStreamReader(conn.getErrorStream()));
+                }
+                return new String[] {String.valueOf(conn.getResponseCode()), readStream(reader)};
             }
-
-            return new String[] {String.valueOf(conn.getResponseCode()), readStream(reader)};
+            return new String[] {"-1", "Error"};
         }
         catch (Exception e) {
             Log.e("Phocalstream", "Exception : " + e.getMessage(), e);
@@ -287,7 +273,7 @@ public class RequestManager {
     }
 
     private void saveCookies(String cookies) {
-        settings.edit().putString(this.COOKIE_STORE_KEY, cookies).commit();
+        settings.edit().putString(this.COOKIE_STORE_KEY, cookies).apply();
     }
 
 }
