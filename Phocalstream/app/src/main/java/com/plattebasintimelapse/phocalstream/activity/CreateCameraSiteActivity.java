@@ -37,13 +37,13 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 public class CreateCameraSiteActivity extends Activity implements
         GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
 
     private GoogleApiClient mGoogleApiClient;
-    private boolean mResolvingError = false;
 
     private LocationRequest mLocationRequest;
     private Location mLastLocation;
@@ -54,7 +54,7 @@ public class CreateCameraSiteActivity extends Activity implements
     private static final int REQUEST_IMAGE_CAPTURE = 1;
     private String photoPath;
 
-    private EditText siteNameField, siteLocationField;
+    private EditText siteLocationField;
     private MenuItem create;
 
     private String siteName = "";
@@ -69,16 +69,18 @@ public class CreateCameraSiteActivity extends Activity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_camera_site);
-        getActionBar().setDisplayHomeAsUpEnabled(true);
+        if (getActionBar() != null) {
+            getActionBar().setDisplayHomeAsUpEnabled(true);
+        }
 
         buildGoogleApiClient();
         this.mGeocoder = new Geocoder(this);
         this.stateAbbreviations = createStateAbbreviationHash();
 
         this.siteLocationField = (EditText) findViewById(R.id.siteLocationField);
-        this.siteNameField = (EditText) findViewById(R.id.siteNameField);
 
-        this.siteNameField.addTextChangedListener(new TextWatcher() {
+        EditText siteNameField = (EditText) findViewById(R.id.siteNameField);
+        siteNameField.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -104,9 +106,7 @@ public class CreateCameraSiteActivity extends Activity implements
     @Override
     protected void onStart() {
         super.onStart();
-        if (!mResolvingError) {  // more about this later
-            mGoogleApiClient.connect();
-        }
+        mGoogleApiClient.connect();
     }
 
     @Override
@@ -161,7 +161,7 @@ public class CreateCameraSiteActivity extends Activity implements
         dispatchTakePictureIntent();
     }
 
-    public void createCameraSite() {
+    private void createCameraSite() {
         CreateCameraSiteAsync createCameraSiteAsync = new CreateCameraSiteAsync(this, this.progressBar, this.photoPath);
 
         HashMap<String, String> values = new HashMap<>();
@@ -171,6 +171,7 @@ public class CreateCameraSiteActivity extends Activity implements
         values.put("County", this.siteCounty);
         values.put("State", this.siteState);
 
+        //noinspection unchecked
         createCameraSiteAsync.execute(values);
     }
 
@@ -202,7 +203,7 @@ public class CreateCameraSiteActivity extends Activity implements
         }
     }
 
-    protected synchronized void buildGoogleApiClient() {
+    private synchronized void buildGoogleApiClient() {
         this.mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
@@ -210,23 +211,23 @@ public class CreateCameraSiteActivity extends Activity implements
                 .build();
     }
 
-    protected void createLocationRequest() {
+    private void createLocationRequest() {
         this.mLocationRequest = new LocationRequest();
         this.mLocationRequest.setInterval(10000);
         this.mLocationRequest.setFastestInterval(5000);
         this.mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
     }
 
-    protected void startLocationUpdates() {
+    private void startLocationUpdates() {
         LocationServices.FusedLocationApi.requestLocationUpdates(this.mGoogleApiClient, this.mLocationRequest, this);
     }
 
-    protected void stopLocationUpdates() {
+    private void stopLocationUpdates() {
         LocationServices.FusedLocationApi.removeLocationUpdates(this.mGoogleApiClient, this);
     }
 
     private Map<String, String> createStateAbbreviationHash() {
-        Map<String, String> states = new HashMap<String, String>();
+        Map<String, String> states = new HashMap<>();
         states.put("Alabama","AL");
         states.put("Alaska","AK");
         states.put("Alberta","AB");
@@ -345,8 +346,7 @@ public class CreateCameraSiteActivity extends Activity implements
         if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
 
             // Create the File where the photo should go
-            File photoFile = null;
-
+            File photoFile;
             try {
                 photoFile = this.createImageFile();
 
@@ -363,9 +363,9 @@ public class CreateCameraSiteActivity extends Activity implements
         }
     }
 
-    public File createImageFile() throws IOException {
+    private File createImageFile() throws IOException {
         // Create an image file name
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(new Date());
         String imageFileName = "JPEG_" + timeStamp + "_";
         File storageDir = Environment.getExternalStoragePublicDirectory(
                 Environment.DIRECTORY_PICTURES);
@@ -409,9 +409,8 @@ public class CreateCameraSiteActivity extends Activity implements
 
         int width = 500;
         int height = 500;
-        int sampleSize = calculateInSampleSize(options, width, height);
 
-        options.inSampleSize = sampleSize;
+        options.inSampleSize = calculateInSampleSize(options, width, height);
         options.inJustDecodeBounds = false;
         this.siteImage  = BitmapFactory.decodeFile(photoPath, options);
 

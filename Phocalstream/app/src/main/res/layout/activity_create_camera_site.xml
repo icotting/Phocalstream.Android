@@ -12,8 +12,9 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Camera Site Name"
+        android:text="@string/activity_create_site_name_label"
         android:id="@+id/textView"
+        android:labelFor="@+id/siteNameField"
         android:layout_alignParentTop="true"
         android:layout_alignParentStart="true" />
 
@@ -23,13 +24,15 @@
         android:id="@+id/siteNameField"
         android:layout_below="@+id/textView"
         android:layout_alignParentStart="true"
-        android:layout_alignParentEnd="true" />
+        android:layout_alignParentEnd="true"
+        android:inputType="text" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Camera Site Location (current location)"
+        android:text="@string/activity_create_site_location_label"
         android:id="@+id/textView2"
+        android:labelFor="@+id/siteLocationField"
         android:layout_below="@+id/siteNameField"
         android:layout_alignParentStart="true"
         android:layout_marginTop="16dip" />
@@ -40,12 +43,13 @@
         android:id="@+id/siteLocationField"
         android:layout_below="@+id/textView2"
         android:layout_alignParentStart="true"
-        android:layout_alignEnd="@+id/siteNameField" />
+        android:layout_alignEnd="@+id/siteNameField"
+        android:inputType="text" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Add First Photo"
+        android:text="@string/activity_create_site_add_button"
         android:id="@+id/addFirstPhoto"
         android:layout_below="@+id/siteLocationField"
         android:layout_centerHorizontal="true"
@@ -58,7 +62,8 @@
         android:id="@+id/siteImagePreview"
         android:layout_below="@+id/addFirstPhoto"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="16dip" />
+        android:layout_marginTop="16dip"
+        android:contentDescription="@string/activity_create_site_image_description" />
 
     <ProgressBar
         style="?android:attr/progressBarStyleLarge"

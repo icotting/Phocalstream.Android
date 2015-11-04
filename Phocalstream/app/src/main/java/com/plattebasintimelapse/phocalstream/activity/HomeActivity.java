@@ -1,6 +1,5 @@
 package com.plattebasintimelapse.phocalstream.activity;
 
-import android.app.ActionBar;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Environment;
@@ -25,11 +24,12 @@ import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 public class HomeActivity extends FragmentActivity {
 
-    UserSitePagerAdapter userSitePagerAdapter;
-    ViewPager mViewPager;
+    private UserSitePagerAdapter userSitePagerAdapter;
+    private ViewPager mViewPager;
 
     private ProgressBar progressBar;
 
@@ -40,7 +40,6 @@ public class HomeActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
-        final ActionBar actionBar = getActionBar();
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
 
         userSitePagerAdapter = new UserSitePagerAdapter(getSupportFragmentManager());
@@ -103,8 +102,7 @@ public class HomeActivity extends FragmentActivity {
         if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
 
             // Create the File where the photo should go
-            File photoFile = null;
-
+            File photoFile;
             try {
                 photoFile = this.createImageFile();
 
@@ -121,9 +119,9 @@ public class HomeActivity extends FragmentActivity {
         }
     }
 
-    public File createImageFile() throws IOException {
+    private File createImageFile() throws IOException {
         // Create an image file name
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(new Date());
         String imageFileName = "JPEG_" + timeStamp + "_";
         File storageDir = Environment.getExternalStoragePublicDirectory(
                 Environment.DIRECTORY_PICTURES);

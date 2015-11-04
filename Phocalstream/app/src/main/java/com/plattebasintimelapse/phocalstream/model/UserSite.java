@@ -1,16 +1,13 @@
 package com.plattebasintimelapse.phocalstream.model;
 
-/**
- * Created by ZachChristensen on 5/15/15.
- */
 public class UserSite {
 
-    long CollectionID;
-    String Name;
-    int PhotoCount;
-    String From;
-    String To;
-    long CoverPhotoID;
+    private long CollectionID;
+    private String Name;
+    private int PhotoCount;
+    private String From;
+    private String To;
+    private long CoverPhotoID;
 
 
     public UserSite() {

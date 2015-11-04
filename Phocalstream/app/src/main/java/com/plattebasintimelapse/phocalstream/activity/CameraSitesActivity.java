@@ -21,34 +21,30 @@ import java.util.ArrayList;
 
 public class CameraSitesActivity extends Activity {
 
-    private RecyclerView mRecyclerView;
-    private CameraSiteAdapter mAdapter;
-    private RecyclerView.LayoutManager mLayoutManager;
-
-    private ProgressBar progressBar;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_camera_sites);
 
-        getActionBar().setDisplayHomeAsUpEnabled(true);
+        if (getActionBar() != null) {
+            getActionBar().setDisplayHomeAsUpEnabled(true);
+        }
 
-        progressBar = (ProgressBar) findViewById(R.id.progressBar);
+        ProgressBar progressBar = (ProgressBar) findViewById(R.id.progressBar);
 
-        mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
-        mRecyclerView.addItemDecoration(new SpacesItemDecoration(40));
+        RecyclerView mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
+        mRecyclerView.addItemDecoration(new SpacesItemDecoration());
 
         // use this setting to improve performance if you know that changes
         // in content do not change the layout size of the RecyclerView
         mRecyclerView.setHasFixedSize(true);
 
         // use a linear layout manager
-        mLayoutManager = new LinearLayoutManager(this);
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayoutManager);
 
         // specify an adapter (see also next example)
-        mAdapter = new CameraSiteAdapter(new ArrayList<CameraSite>());
+        CameraSiteAdapter mAdapter = new CameraSiteAdapter(new ArrayList<CameraSite>());
         mRecyclerView.setAdapter(mAdapter);
 
         CameraSiteAsync cameraSiteAsync = new CameraSiteAsync(this, progressBar, mAdapter);
@@ -74,10 +70,10 @@ public class CameraSitesActivity extends Activity {
 }
 
 class SpacesItemDecoration extends RecyclerView.ItemDecoration {
-    private int space;
+    private final int space;
 
-    public SpacesItemDecoration(int space) {
-        this.space = space;
+    public SpacesItemDecoration() {
+        this.space = 40;
     }
 
     @Override

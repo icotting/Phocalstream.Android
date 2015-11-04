@@ -2,25 +2,19 @@ package com.plattebasintimelapse.phocalstream.services;
 
 import android.app.Activity;
 import android.os.AsyncTask;
-import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.plattebasintimelapse.phocalstream.managers.RequestManager;
 
-import java.util.HashMap;
-
-/**
- * Created by ZachChristensen on 10/30/15.
- */
 public class UploadImageAsync extends AsyncTask<Long, Integer, String[]> {
 
-    private Activity activity;
-    private ProgressBar progressBar;
-    private String filePath;
+    private final Activity activity;
+    private final ProgressBar progressBar;
+    private final String filePath;
 
-    private RequestManager requestManager;
+    private final RequestManager requestManager;
 
     public UploadImageAsync(Activity activity, ProgressBar progressBar, String filePath) {
         this.activity = activity;

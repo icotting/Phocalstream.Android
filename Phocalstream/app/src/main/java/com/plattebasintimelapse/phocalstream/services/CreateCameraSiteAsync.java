@@ -1,29 +1,23 @@
 package com.plattebasintimelapse.phocalstream.services;
 
 import android.app.Activity;
-import android.app.DownloadManager;
-import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import com.google.gson.Gson;
 import com.plattebasintimelapse.phocalstream.managers.RequestManager;
 
 import java.util.HashMap;
 
-/**
- * Created by ZachChristensen on 10/30/15.
- */
 public class CreateCameraSiteAsync extends AsyncTask<HashMap<String, String>, Integer, String[]> {
 
-    private Activity activity;
-    private ProgressBar progressBar;
-    private String filePath;
+    private final Activity activity;
+    private final ProgressBar progressBar;
+    private final String filePath;
 
-    private RequestManager requestManager;
+    private final RequestManager requestManager;
 
     public CreateCameraSiteAsync(Activity activity, ProgressBar progressBar, String filePath) {
         this.activity = activity;
@@ -55,8 +49,9 @@ public class CreateCameraSiteAsync extends AsyncTask<HashMap<String, String>, In
         this.activity.finish();
     }
 
+    @SafeVarargs
     @Override
-    protected String[] doInBackground(HashMap<String, String>... params) {
+    protected final String[] doInBackground(HashMap<String, String>... params) {
         String url = "http://images.plattebasintimelapse.org/api/usercollection/CreateUserCameraSite";
         String[] result = this.requestManager.Post_Connection(url, params[0]);
 

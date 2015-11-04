@@ -22,7 +22,7 @@ import com.plattebasintimelapse.phocalstream.managers.AuthenticationManager;
  */
 public class LoginActivity extends FragmentActivity {
 
-    CallbackManager callbackManager;
+    private CallbackManager callbackManager;
     private ProgressBar progressBar;
     private AuthenticationManager authenticationManager;
 

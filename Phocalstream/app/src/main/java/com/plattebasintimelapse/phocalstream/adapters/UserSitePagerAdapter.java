@@ -10,15 +10,12 @@ import com.plattebasintimelapse.phocalstream.model.UserSite;
 
 import java.util.ArrayList;
 
-/**
- * Created by ZachChristensen on 5/20/15.
- */
 // Since this is an object collection, use a FragmentStatePagerAdapter,
 // and NOT a FragmentPagerAdapter.
 public class UserSitePagerAdapter extends FragmentPagerAdapter {
 
-    private Gson gson;
-    private ArrayList<UserSite> sites = new ArrayList<UserSite>();
+    private final Gson gson;
+    private ArrayList<UserSite> sites = new ArrayList<>();
 
     public UserSitePagerAdapter(FragmentManager fm) {
         super(fm);

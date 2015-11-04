@@ -1,13 +1,10 @@
 package com.plattebasintimelapse.phocalstream.model;
 
-/**
- * Created by ZachChristensen on 5/15/15.
- */
 public class CameraSite {
 
-    Details Details;
-    double Latitude;
-    double Longitude;
+    private Details Details;
+    private double Latitude;
+    private double Longitude;
 
     public CameraSite() {
     }

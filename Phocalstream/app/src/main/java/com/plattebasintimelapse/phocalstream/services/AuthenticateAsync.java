@@ -7,18 +7,14 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.view.View;
 import android.widget.ProgressBar;
-import android.widget.Toast;
 
 import com.plattebasintimelapse.phocalstream.activity.HomeActivity;
 import com.plattebasintimelapse.phocalstream.managers.RequestManager;
 
-/**
- * Created by ZachChristensen on 5/21/15.
- */
 public class AuthenticateAsync extends AsyncTask<String, Void, String[]> {
 
-    private Context context;
-    private ProgressBar progressBar;
+    private final Context context;
+    private final ProgressBar progressBar;
 
     public AuthenticateAsync(Context context, ProgressBar progressBar) {
         this.context = context;

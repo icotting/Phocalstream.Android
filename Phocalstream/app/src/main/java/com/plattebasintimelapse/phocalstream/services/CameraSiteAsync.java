@@ -13,14 +13,11 @@ import com.plattebasintimelapse.phocalstream.model.CameraSite;
 
 import java.util.ArrayList;
 
-/**
- * Created by ZachChristensen on 5/15/15.
- */
 public class CameraSiteAsync extends AsyncTask<Void, Integer, ArrayList<CameraSite>> {
 
-    private Context context;
-    private ProgressBar progressBar;
-    private CameraSiteAdapter adapter;
+    private final Context context;
+    private final ProgressBar progressBar;
+    private final CameraSiteAdapter adapter;
 
     public CameraSiteAsync(Context context, ProgressBar progressBar, CameraSiteAdapter adapter) {
         this.context = context;
@@ -40,7 +37,8 @@ public class CameraSiteAsync extends AsyncTask<Void, Integer, ArrayList<CameraSi
         String[] result = new RequestManager(this.context).Get_Connection("http://images.plattebasintimelapse.com/api/sitecollection/list");
 
         if(result[0].equals("200")) {
-            sites = new Gson().fromJson(result[1], new TypeToken<ArrayList<CameraSite>>() {}.getType());
+            sites = new Gson().fromJson(result[1], new TypeToken<ArrayList<CameraSite>>() {
+            }.getType());
         }
 
         return sites;

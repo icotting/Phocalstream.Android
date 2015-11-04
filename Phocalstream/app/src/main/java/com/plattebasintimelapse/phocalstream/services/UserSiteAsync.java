@@ -2,7 +2,6 @@ package com.plattebasintimelapse.phocalstream.services;
 
 import android.content.Context;
 import android.os.AsyncTask;
-import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
 
@@ -14,14 +13,11 @@ import com.plattebasintimelapse.phocalstream.model.UserSite;
 
 import java.util.ArrayList;
 
-/**
- * Created by ZachChristensen on 5/15/15.
- */
 public class UserSiteAsync extends AsyncTask<Void, Integer, ArrayList<UserSite>> {
 
-    private Context context;
-    private ProgressBar progressBar;
-    private UserSitePagerAdapter adapter;
+    private final Context context;
+    private final ProgressBar progressBar;
+    private final UserSitePagerAdapter adapter;
 
     public UserSiteAsync(Context context, ProgressBar progressBar, UserSitePagerAdapter adapter) {
         this.context = context;

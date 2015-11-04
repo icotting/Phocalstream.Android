@@ -25,7 +25,7 @@ import java.util.Map;
 
 public class RequestManager {
 
-    private SharedPreferences settings;
+    private final SharedPreferences settings;
     private final java.net.CookieManager msCookieManager;
     private final String COOKIE_STORE_KEY = "Cookie-Store-Key";
 
@@ -228,7 +228,7 @@ public class RequestManager {
                 bytesRead = fileInputStream.read(buffer, 0, bufferSize);
             }
 
-            // send multipart form data necesssary after <span id="IL_AD12" class="IL_AD">file data</span>...
+            // send multipart form data necessary after <span id="IL_AD12" class="IL_AD">file data</span>...
             dos.writeBytes(lineEnd);
             dos.writeBytes(twoHyphens + boundary + twoHyphens + lineEnd);
 

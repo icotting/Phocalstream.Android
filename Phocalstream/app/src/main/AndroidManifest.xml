@@ -32,13 +32,13 @@
         <activity
             android:name=".activity.CameraSitesActivity"
             android:label="@string/title_activity_camera_sites"
-            android:parentActivityName=".activity.LoginActivity"></activity>
+            android:parentActivityName=".activity.LoginActivity"/>
         <activity
             android:name=".activity.HomeActivity"
-            android:label="@string/title_activity_home"></activity>
+            android:label="@string/title_activity_home"/>
         <activity
             android:name=".activity.CreateCameraSiteActivity"
-            android:label="@string/title_activity_create_camera_site"
+            android:label="@string/activity_create_camera_site_title"
             android:parentActivityName=".activity.HomeActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
