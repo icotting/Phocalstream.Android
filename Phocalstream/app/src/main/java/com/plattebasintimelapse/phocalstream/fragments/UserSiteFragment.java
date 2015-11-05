@@ -63,8 +63,7 @@ public class UserSiteFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_user_site, container, false);
 
         ImageView background = (ImageView) view.findViewById(R.id.user_site_image);
-        FetchImageAsync fetchImageAsync = new FetchImageAsync(background);
-        fetchImageAsync.execute((int) userSite.getCoverPhotoID());
+        new FetchImageAsync(background).execute((int) userSite.getCoverPhotoID());
 
         TextView siteTitle = (TextView) view.findViewById(R.id.site_name);
         TextView siteDescription = (TextView) view.findViewById(R.id.site_description);
