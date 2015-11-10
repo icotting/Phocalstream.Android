@@ -3,8 +3,8 @@
     package="com.plattebasintimelapse.phocalstream">
 
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
     <application
         android:allowBackup="true"
@@ -32,10 +32,10 @@
         <activity
             android:name=".activity.CameraSitesActivity"
             android:label="@string/title_activity_camera_sites"
-            android:parentActivityName=".activity.LoginActivity"/>
+            android:parentActivityName=".activity.LoginActivity" />
         <activity
             android:name=".activity.HomeActivity"
-            android:label="@string/title_activity_home"/>
+            android:label="@string/title_activity_home" />
         <activity
             android:name=".activity.CreateCameraSiteActivity"
             android:label="@string/activity_create_camera_site_title"
@@ -43,6 +43,14 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.plattebasintimelapse.phocalstream.activity.HomeActivity" />
+        </activity>
+        <activity
+            android:name=".activity.CameraSiteDetails"
+            android:label="@string/title_activity_camera_site_details"
+            android:parentActivityName=".activity.CameraSitesActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.plattebasintimelapse.phocalstream.activity.CameraSitesActivity" />
         </activity>
     </application>
 

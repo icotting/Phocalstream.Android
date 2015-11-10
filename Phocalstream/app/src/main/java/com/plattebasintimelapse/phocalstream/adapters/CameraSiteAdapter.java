@@ -1,14 +1,21 @@
 package com.plattebasintimelapse.phocalstream.adapters;
 
+import android.content.Context;
+import android.content.Intent;
+import android.graphics.Camera;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.gson.Gson;
 import com.plattebasintimelapse.phocalstream.R;
+import com.plattebasintimelapse.phocalstream.activity.CameraSiteDetails;
 import com.plattebasintimelapse.phocalstream.model.CameraSite;
+import com.plattebasintimelapse.phocalstream.model.UserSite;
 import com.plattebasintimelapse.phocalstream.services.FetchImageAsync;
 
 import java.text.DateFormat;
@@ -22,29 +29,39 @@ public class CameraSiteAdapter extends RecyclerView.Adapter<CameraSiteAdapter.Vi
     private ArrayList<CameraSite> sites;
     private final DateFormat dateFormat;
     private final SimpleDateFormat simpleDateFormat;
+    private final Gson gson;
+    private final Context context;
 
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
     // you provide access to all the views for a data item in a view holder
     public static class ViewHolder extends RecyclerView.ViewHolder {
         // each data item is just a string in this case
+        private final View view;
         public final TextView name;
         public final TextView description;
         public final ImageView image;
 
         public ViewHolder(View v) {
             super(v);
+            view = v;
             name = (TextView) v.findViewById(R.id.site_name);
             description = (TextView) v.findViewById(R.id.site_description);
             image = (ImageView) v.findViewById(R.id.site_image);
         }
+
+        public void setOnClickListener(View.OnClickListener listener) {
+            this.view.setOnClickListener(listener);
+        }
     }
 
     // Provide a suitable constructor (depends on the kind of data set)
-    public CameraSiteAdapter(ArrayList<CameraSite> sites) {
+    public CameraSiteAdapter(Context context, ArrayList<CameraSite> sites) {
+        this.context = context;
         this.sites = sites;
         this.dateFormat = DateFormat.getDateInstance();
         this.simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+        this.gson = new Gson();
     }
 
     // Create new views (invoked by the layout manager)
@@ -60,7 +77,16 @@ public class CameraSiteAdapter extends RecyclerView.Adapter<CameraSiteAdapter.Vi
         // - get element from your data set at this position
         // - replace the contents of the view with that element
 
-        CameraSite site = sites.get(position);
+        final CameraSite site = sites.get(position);
+
+        holder.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(CameraSiteAdapter.this.context, CameraSiteDetails.class);
+                i.putExtra(CameraSiteDetails.ARG_SITE, CameraSiteAdapter.this.gson.toJson(site, CameraSite.class));
+                CameraSiteAdapter.this.context.startActivity(i);
+            }
+        });
 
         holder.image.setImageDrawable(null);
 

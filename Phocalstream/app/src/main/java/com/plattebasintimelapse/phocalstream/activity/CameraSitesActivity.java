@@ -1,16 +1,21 @@
 package com.plattebasintimelapse.phocalstream.activity;
 
 import android.app.Activity;
+import android.content.SharedPreferences;
 import android.graphics.Rect;
+import android.provider.Settings;
 import android.support.v4.app.NavUtils;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ProgressBar;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.plattebasintimelapse.phocalstream.adapters.CameraSiteAdapter;
 import com.plattebasintimelapse.phocalstream.R;
 import com.plattebasintimelapse.phocalstream.model.CameraSite;
@@ -20,6 +25,10 @@ import java.util.ArrayList;
 
 
 public class CameraSitesActivity extends Activity {
+
+    public static final String CAMERA_SITES_CACHE = "camera_site_cache";
+    public static final String CAMERA_SITES_DOWNLOAD_TIME = "camera_site_download_time";
+    private static final long CAMERA_SITES_CACHE_LENGTH = 3600000; // 1000 * 60 * 60 = 1 hour
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,11 +53,24 @@ public class CameraSitesActivity extends Activity {
         mRecyclerView.setLayoutManager(mLayoutManager);
 
         // specify an adapter (see also next example)
-        CameraSiteAdapter mAdapter = new CameraSiteAdapter(new ArrayList<CameraSite>());
+        CameraSiteAdapter mAdapter = new CameraSiteAdapter(this, new ArrayList<CameraSite>());
         mRecyclerView.setAdapter(mAdapter);
 
-        CameraSiteAsync cameraSiteAsync = new CameraSiteAsync(this, progressBar, mAdapter);
-        cameraSiteAsync.execute();
+        // Check the cache
+        SharedPreferences prefs = getPreferences(0);
+        if (System.currentTimeMillis() - prefs.getLong(this.CAMERA_SITES_DOWNLOAD_TIME, 0) > this.CAMERA_SITES_CACHE_LENGTH) {
+            CameraSiteAsync cameraSiteAsync = new CameraSiteAsync(this, prefs, progressBar, mAdapter);
+            cameraSiteAsync.execute();
+        }
+        else {
+            ArrayList<CameraSite> sites = new Gson().fromJson(
+                    prefs.getString(this.CAMERA_SITES_CACHE, ""),
+                    new TypeToken<ArrayList<CameraSite>>() {}.getType());
+
+            mAdapter.setSites(sites);
+            mAdapter.notifyDataSetChanged();
+            progressBar.setVisibility(View.GONE);
+        }
     }
 
     @Override

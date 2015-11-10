@@ -17,4 +17,6 @@
     <string name="fragment_site_card_image_description">Camera Site Cover Photo</string>
     <string name="activity_create_site_image_description">Create Site First Image</string>
     <string name="activity_login_background_image_description">Login Background Image</string>
+    <string name="title_activity_camera_site_details">Details</string>
+    <string name="activty_camera_details_image_description">Camera Details Image</string>
 </resources>
