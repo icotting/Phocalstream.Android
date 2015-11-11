@@ -25,7 +25,6 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="photo details"
             android:id="@+id/camera_details_count"
             android:textSize="24sp"
             android:layout_marginBottom="8dip"
@@ -34,7 +33,6 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="photo details"
             android:id="@+id/camera_details_date"
             android:textSize="18sp"
             android:layout_marginBottom="8dip" />
@@ -42,7 +40,6 @@
         <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="See Site Online"
             android:id="@+id/camera_details_button_online"
             android:onClick="browseOnline"
             android:background="@color/material_deep_teal_500"

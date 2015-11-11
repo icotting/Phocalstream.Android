@@ -1,7 +1,6 @@
 package com.plattebasintimelapse.phocalstream.activity;
 
 import android.content.Intent;
-import android.graphics.Camera;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Activity;
@@ -16,11 +15,9 @@ import android.widget.TextView;
 import com.google.gson.Gson;
 import com.plattebasintimelapse.phocalstream.R;
 import com.plattebasintimelapse.phocalstream.model.CameraSite;
-import com.plattebasintimelapse.phocalstream.model.UserSite;
 import com.plattebasintimelapse.phocalstream.services.FetchImageAsync;
 
 import java.text.DateFormat;
-import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
@@ -49,7 +46,6 @@ public class CameraSiteDetails extends Activity {
         // Name and Details
         DateFormat dateFormat = DateFormat.getDateInstance();
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
-        DecimalFormat formatter = new DecimalFormat("#,###,###");
 
         Button onlineButton = (Button) findViewById(R.id.camera_details_button_online);
         TextView photoCount = (TextView) findViewById(R.id.camera_details_count);
