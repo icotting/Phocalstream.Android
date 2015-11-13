@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/camera_details_image"
-        android:contentDescription="@string/activty_camera_details_image_description"
+        android:contentDescription="@string/activity_camera_details_image_description"
         android:scaleType="centerCrop" />
 
     <LinearLayout
