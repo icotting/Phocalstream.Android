@@ -17,13 +17,12 @@ import com.facebook.login.widget.LoginButton;
 import com.plattebasintimelapse.phocalstream.R;
 import com.plattebasintimelapse.phocalstream.managers.AuthenticationManager;
 
-
 /**
  * A login screen that offers login via email/password.
  */
 public class LoginActivity extends FragmentActivity {
 
-    CallbackManager callbackManager;
+    private CallbackManager callbackManager;
     private ProgressBar progressBar;
     private AuthenticationManager authenticationManager;
 
@@ -64,8 +63,7 @@ public class LoginActivity extends FragmentActivity {
     }
 
     public void cameraSites(View view) {
-        Intent i = new Intent(LoginActivity.this, CameraSitesActivity.class);
-        startActivity(i);
+        startActivity(new Intent(LoginActivity.this, CameraSitesActivity.class));
     }
 
     @Override

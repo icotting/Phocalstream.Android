@@ -2,11 +2,21 @@
     <string name="app_name">Phocalstream</string>
     <string name="facebook_app_id">1450791518525368</string>
     <string name="title_activity_camera_sites">Phocalstream Camera Sites</string>
-
-    <string name="hello_world">Hello world!</string>
-    <string name="action_settings">Settings</string>
     <string name="title_activity_home">User Sites</string>
-
-<!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="login_browse_sites_text">Or, Browse Existing Camera Sites</string>
+    <string name="login_title_text">SIGN IN TO UPLOAD PHOTOS</string>
+    <string name="menu_create_site_create">Create</string>
+    <string name="menu_home_photo">Add Photo</string>
+    <string name="menu_home_site">Add Site</string>
+    <string name="menu_home_logout">Logout</string>
+    <string name="activity_create_camera_site_title">Create Site</string>
+    <string name="activity_create_site_name_label">Camera Site Name</string>
+    <string name="activity_create_site_location_label">Camera Site Location (current location)</string>
+    <string name="activity_create_site_add_button">Add First Photo</string>
+    <string name="fragment_user_site_image_description">Camera Site Cover Photo</string>
+    <string name="fragment_site_card_image_description">Camera Site Cover Photo</string>
+    <string name="activity_create_site_image_description">Create Site First Image</string>
+    <string name="activity_login_background_image_description">Login Background Image</string>
+    <string name="title_activity_camera_site_details">Details</string>
+    <string name="activity_camera_details_image_description">Camera Details Image</string>
 </resources>

@@ -4,21 +4,18 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.view.View;
 import android.widget.ProgressBar;
-import android.widget.Toast;
 
 import com.plattebasintimelapse.phocalstream.activity.HomeActivity;
 import com.plattebasintimelapse.phocalstream.managers.RequestManager;
 
-/**
- * Created by ZachChristensen on 5/21/15.
- */
 public class AuthenticateAsync extends AsyncTask<String, Void, String[]> {
 
-    private Context context;
-    private ProgressBar progressBar;
+    private final Context context;
+    private final ProgressBar progressBar;
 
     public AuthenticateAsync(Context context, ProgressBar progressBar) {
         this.context = context;
@@ -66,7 +63,8 @@ public class AuthenticateAsync extends AsyncTask<String, Void, String[]> {
     @Override
     protected String[] doInBackground(String... params) {
         String url = String.format("http://images.plattebasintimelapse.org/api/mobileclient/authenticate?fbToken=%s", params[0]);
-        return RequestManager.Get_Connection(url);
+        RequestManager requestManager = new RequestManager(this.context);
+        return requestManager.Login(url);
     }
 
 
@@ -82,6 +80,16 @@ public class AuthenticateAsync extends AsyncTask<String, Void, String[]> {
                         dialog.dismiss();
                     }
                 });
+
+        if (title.equals("No Account")) {
+            builder.setNeutralButton("Create account", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                context.startActivity(new Intent(Intent.ACTION_VIEW,
+                            Uri.parse("http://images.plattebasintimelapse.com/account/login")));
+                }
+            });
+        }
 
         // Create the AlertDialog
         AlertDialog dialog = builder.create();

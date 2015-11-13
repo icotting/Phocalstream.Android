@@ -2,7 +2,7 @@ package com.plattebasintimelapse.phocalstream.adapters;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentStatePagerAdapter;
 
 import com.google.gson.Gson;
 import com.plattebasintimelapse.phocalstream.fragments.UserSiteFragment;
@@ -10,15 +10,12 @@ import com.plattebasintimelapse.phocalstream.model.UserSite;
 
 import java.util.ArrayList;
 
-/**
- * Created by ZachChristensen on 5/20/15.
- */
 // Since this is an object collection, use a FragmentStatePagerAdapter,
 // and NOT a FragmentPagerAdapter.
-public class UserSitePagerAdapter extends FragmentPagerAdapter {
+public class UserSitePagerAdapter extends FragmentStatePagerAdapter {
 
-    private Gson gson;
-    private ArrayList<UserSite> sites = new ArrayList<UserSite>();
+    private final Gson gson;
+    private ArrayList<UserSite> sites = new ArrayList<>();
 
     public UserSitePagerAdapter(FragmentManager fm) {
         super(fm);
@@ -36,8 +33,14 @@ public class UserSitePagerAdapter extends FragmentPagerAdapter {
     }
 
     @Override
+    public int getItemPosition(Object object) {
+        super.getItemPosition(object);
+        return POSITION_NONE;
+    }
+
+    @Override
     public CharSequence getPageTitle(int position) {
-        return sites.get(position).getDetails().getSiteName();
+        return sites.get(position).getName();
     }
 
     public ArrayList<UserSite> getSites() {

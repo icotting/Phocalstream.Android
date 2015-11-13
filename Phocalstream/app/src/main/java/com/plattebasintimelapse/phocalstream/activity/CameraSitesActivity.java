@@ -1,6 +1,7 @@
 package com.plattebasintimelapse.phocalstream.activity;
 
 import android.app.Activity;
+import android.content.SharedPreferences;
 import android.graphics.Rect;
 import android.support.v4.app.NavUtils;
 import android.os.Bundle;
@@ -11,6 +12,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.plattebasintimelapse.phocalstream.adapters.CameraSiteAdapter;
 import com.plattebasintimelapse.phocalstream.R;
 import com.plattebasintimelapse.phocalstream.model.CameraSite;
@@ -21,38 +24,51 @@ import java.util.ArrayList;
 
 public class CameraSitesActivity extends Activity {
 
-    private RecyclerView mRecyclerView;
-    private CameraSiteAdapter mAdapter;
-    private RecyclerView.LayoutManager mLayoutManager;
-
-    private ProgressBar progressBar;
+    public static final String CAMERA_SITES_CACHE = "camera_site_cache";
+    public static final String CAMERA_SITES_DOWNLOAD_TIME = "camera_site_download_time";
+    private static final long CAMERA_SITES_CACHE_LENGTH = 3600000; // 1000 * 60 * 60 = 1 hour
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_camera_sites);
 
-        getActionBar().setDisplayHomeAsUpEnabled(true);
+        if (getActionBar() != null) {
+            getActionBar().setDisplayHomeAsUpEnabled(true);
+        }
 
-        progressBar = (ProgressBar) findViewById(R.id.progressBar);
+        ProgressBar progressBar = (ProgressBar) findViewById(R.id.progressBar);
 
-        mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
-        mRecyclerView.addItemDecoration(new SpacesItemDecoration(40));
+        RecyclerView mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
+        mRecyclerView.addItemDecoration(new SpacesItemDecoration());
 
         // use this setting to improve performance if you know that changes
         // in content do not change the layout size of the RecyclerView
         mRecyclerView.setHasFixedSize(true);
 
         // use a linear layout manager
-        mLayoutManager = new LinearLayoutManager(this);
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayoutManager);
 
         // specify an adapter (see also next example)
-        mAdapter = new CameraSiteAdapter(new ArrayList<CameraSite>());
+        CameraSiteAdapter mAdapter = new CameraSiteAdapter(this, new ArrayList<CameraSite>());
         mRecyclerView.setAdapter(mAdapter);
 
-        CameraSiteAsync cameraSiteAsync = new CameraSiteAsync(progressBar, mAdapter);
-        cameraSiteAsync.execute();
+        // Check the cache
+        SharedPreferences prefs = getPreferences(0);
+        if (System.currentTimeMillis() - prefs.getLong(CameraSitesActivity.CAMERA_SITES_DOWNLOAD_TIME, 0) > CameraSitesActivity.CAMERA_SITES_CACHE_LENGTH) {
+            CameraSiteAsync cameraSiteAsync = new CameraSiteAsync(this, prefs, progressBar, mAdapter);
+            cameraSiteAsync.execute();
+        }
+        else {
+            ArrayList<CameraSite> sites = new Gson().fromJson(
+                    prefs.getString(CameraSitesActivity.CAMERA_SITES_CACHE, ""),
+                    new TypeToken<ArrayList<CameraSite>>() {}.getType());
+
+            mAdapter.setSites(sites);
+            mAdapter.notifyDataSetChanged();
+            progressBar.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -74,10 +90,10 @@ public class CameraSitesActivity extends Activity {
 }
 
 class SpacesItemDecoration extends RecyclerView.ItemDecoration {
-    private int space;
+    private final int space;
 
-    public SpacesItemDecoration(int space) {
-        this.space = space;
+    public SpacesItemDecoration() {
+        this.space = 40;
     }
 
     @Override

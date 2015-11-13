@@ -6,12 +6,9 @@ import android.widget.ImageView;
 
 import com.plattebasintimelapse.phocalstream.managers.RequestManager;
 
-/**
- * Created by ZachChristensen on 5/18/15.
- */
 public class FetchImageAsync extends AsyncTask<Integer, Void, Bitmap> {
 
-    private ImageView image;
+    private final ImageView image;
 
     public FetchImageAsync(ImageView image) {
         this.image = image;
